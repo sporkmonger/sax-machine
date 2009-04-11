@@ -7,15 +7,27 @@ module SAXMachine
   end
   
   def parse(xml_text)
-    sax_handler = SAXHandler.new(self)
-    parser = Nokogiri::XML::SAX::Parser.new(sax_handler)
-    parser.parse(xml_text)
+    unless @parser
+      sax_handler = SAXHandler.new(self)
+      @parser = Nokogiri::XML::SAX::PushParser.new(sax_handler)
+    end
+    @parser << xml_text
+    self
+  end
+
+  def parse_finish
+    if @parser
+      @parser.finish
+    end
     self
   end
   
   module ClassMethods
 
     def parse(xml_text)
+      # It might be cleaner to aditionally call parse_finish here, but
+      # then Nokogiri/libxml2 barfs on incomplete documents. Desired
+      # behaviour?
       new.parse(xml_text)
     end
     
