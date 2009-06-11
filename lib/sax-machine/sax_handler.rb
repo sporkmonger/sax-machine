@@ -22,8 +22,9 @@ module SAXMachine
     end
 
     def start_element(name, attrs = [])
+      
       @name   = name
-      @attrs  = attrs
+      @attrs  = attrs.map { |a| SAXHandler.decode_xml(a) }
 
       if parsing_collection?
         @collection_handler.start_element(@name, @attrs)
@@ -112,5 +113,18 @@ module SAXMachine
     def sax_config
       @object.class.sax_config
     end
+  
+    ##
+    # Decodes XML special characters.
+    def self.decode_xml(str)
+      entities = {
+        '#38'   => '&amp;',
+        '#13'   => "\r",
+      } 
+      entities.keys.inject(str) { |string, key|
+        string.gsub(/&#{key};/, entities[key])
+      } 
+    end
+  
   end
 end

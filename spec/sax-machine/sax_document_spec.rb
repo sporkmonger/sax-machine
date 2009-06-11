@@ -110,6 +110,11 @@ describe "SAXMachine" do
             end
           end
           
+          it "should escape correctly the ampersand" do
+            document = @klass.parse("<link href='http://api.flickr.com/services/feeds/photos_public.gne?id=49724566@N00&amp;lang=en-us&amp;format=atom' foo='bar'>asdf</link>")
+            document.link.should == "http://api.flickr.com/services/feeds/photos_public.gne?id=49724566@N00&amp;lang=en-us&amp;format=atom"
+          end
+          
           it "should save the value of a matching element" do
             document = @klass.parse("<link href='test' foo='bar'>asdf</link>")
             document.link.should == "test"
