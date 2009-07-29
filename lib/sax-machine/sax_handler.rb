@@ -50,7 +50,7 @@ module SAXMachine
       elsif parsing_collection?
         @collection_handler.end_element(name)
 
-      elsif characaters_captured? && !parsed_config?
+      elsif characaters_captured?
         mark_as_parsed
         @object.send(@element_config.setter, @value)
       end
