@@ -117,6 +117,8 @@ module SAXMachine
     ##
     # Decodes XML special characters.
     def self.decode_xml(str)
+      return str.map &method(:decode_xml) if str.kind_of?(Array)
+
       entities = {
         '#38'   => '&amp;',
         '#13'   => "\r",
