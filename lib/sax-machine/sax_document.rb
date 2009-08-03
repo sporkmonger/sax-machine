@@ -39,7 +39,7 @@ module SAXMachine
       # this is how we allow custom parsing behavior. So you could define the setter
       # and have it parse the string into a date or whatever.
       attr_reader options[:as] unless instance_methods.include?(options[:as].to_s)
-      attr_writer options[:as] unless instance_methods.include?("#{options[:as]}=")
+      attr_writer_once options[:as] unless instance_methods.include?("#{options[:as]}=")
     end
 
     def columns
@@ -88,6 +88,14 @@ module SAXMachine
     
     def sax_config
       @sax_config ||= SAXConfig.new
+    end
+
+    def attr_writer_once(attr)
+      class_eval <<-SRC
+          def #{attr}=(val)
+            @#{attr} ||= val
+          end
+        SRC
     end
   end
   
