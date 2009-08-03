@@ -108,13 +108,14 @@ module SAXMachine
     def self.decode_xml(str)
       return str.map &method(:decode_xml) if str.kind_of?(Array)
 
-      entities = {
-        '#38'   => '&amp;',
-        '#13'   => "\r",
-      } 
-      entities.keys.inject(str) { |string, key|
-        string.gsub(/&#{key};/, entities[key])
-      } 
+      # entities = {
+      #         '#38'   => '&amp;',
+      #         '#13'   => "\r",
+      #       } 
+      #       entities.keys.inject(str) { |string, key|
+      #         string.gsub(/&#{key};/, entities[key])
+      #       } 
+      CGI.unescapeHTML(str)
     end
   
   end
