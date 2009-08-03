@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
     "lib/sax-machine/sax_element_config.rb",
     "lib/sax-machine/sax_document.rb",
     "lib/sax-machine/sax_handler.rb",
+    "lib/sax-machine/ns_stack.rb",
     "README.textile", "Rakefile",
     "spec/spec.opts",
     "spec/spec_helper.rb",
