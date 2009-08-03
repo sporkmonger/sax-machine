@@ -29,9 +29,14 @@ module SAXMachine
       end
     end
 
-    def element_config_for_tag(name, attrs)
+    def element_config_for_tag(name, attrs, nsstack)
+      prefix, name = name.split(':', 2)
+      prefix, name = nil, prefix unless name  # No prefix
+      namespace = nsstack[prefix]
+
       @top_level_elements.detect do |element_config|
         element_config.name == name &&
+        element_config.xmlns_match?(namespace) &&
         element_config.attrs_match?(attrs)
       end
     end

@@ -30,6 +30,12 @@ module SAXMachine
         end
         @data_class = options[:class]
         @required = options[:required]
+
+        @xmlns = case options[:xmlns]
+                 when Array then options[:xmlns]
+                 when String then [options[:xmlns]]
+                 else nil
+                 end
       end
 
       def column
@@ -54,6 +60,10 @@ module SAXMachine
       
       def has_value_and_attrs_match?(attrs)
         !@value.nil? && attrs_match?(attrs)
+      end
+
+      def xmlns_match?(ns)
+        @xmlns.nil? || @xmlns.include?(ns)
       end
       
       def collection?

@@ -1,4 +1,5 @@
 require "nokogiri"
+require "sax-machine/ns_stack"
 
 module SAXMachine
   class SAXHandler < Nokogiri::XML::SAX::Document
@@ -6,6 +7,7 @@ module SAXMachine
 
     def initialize(object)
       @object = object
+      @nsstack = nil
     end
 
     def characters(string)
@@ -24,6 +26,7 @@ module SAXMachine
       
       @name   = name
       @attrs  = attrs.map { |a| SAXHandler.decode_xml(a) }
+      @nsstack  = NSStack.new(@nsstack, @attrs)
 
       if parsing_collection?
         @collection_handler.start_element(@name, @attrs)
@@ -54,6 +57,7 @@ module SAXMachine
       end
 
       reset_current_tag
+      @nsstack = @nsstack.pop
     end
 
     def characaters_captured?
@@ -80,7 +84,7 @@ module SAXMachine
 
     def set_element_config_for_element_value
       @value = ""
-      @element_config = sax_config.element_config_for_tag(@name, @attrs)
+      @element_config = sax_config.element_config_for_tag(@name, @attrs, @nsstack)
     end
 
     def reset_current_collection

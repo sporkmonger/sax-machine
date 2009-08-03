@@ -281,6 +281,52 @@ describe "SAXMachine" do
           document.link_bar.should == 'test2'
         end
       end
+
+      describe "when specifying namespaces" do
+        before :all do
+          @klass = Class.new do
+            include SAXMachine
+            element :a, :xmlns => 'urn:test'
+            element :b, :xmlns => ['', 'urn:test']
+          end
+        end
+
+        it "should get the element with the xmlns" do
+          document = @klass.parse("<a xmlns='urn:test'>hello</a>")
+          document.a.should == 'hello'
+        end
+
+        it "shouldn't get the element without the xmlns" do
+          document = @klass.parse("<a>hello</a>")
+          document.a.should be_nil
+        end
+
+        it "shouldn't get the element with the wrong xmlns" do
+          document = @klass.parse("<a xmlns='urn:test2'>hello</a>")
+          document.a.should be_nil
+        end
+
+        it "should get an element without xmlns if the empty namespace is desired" do
+          document = @klass.parse("<b>hello</b>")
+          document.b.should == 'hello'
+        end
+
+        it "should get an element with the right prefix" do
+          document = @klass.parse("<p:a xmlns:p='urn:test'>hello</p:a>")
+          document.a.should == 'hello'
+        end
+
+        it "should not get an element with the wrong prefix" do
+          document = @klass.parse("<x:a xmlns:p='urn:test' xmlns:x='urn:test2'>hello</x:a>")
+          document.a.should be_nil
+        end
+
+        it "should get a prefixed element without xmlns if the empty namespace is desired" do
+          pending "this needs a less pickier nokogiri push parser"
+          document = @klass.parse("<x:b>hello</x:b>")
+          document.b.should == 'hello'
+        end
+      end
       
     end
   end
