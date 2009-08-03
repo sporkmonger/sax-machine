@@ -62,11 +62,11 @@ describe "SAXMachine" do
         document.title.should == "Title"
       end
 
-      it "should overwrite the value when the element is present" do
+      it "should *not* overwrite the value when the element is present (new behaviour!)" do
         document = @klass.new
         document.title = "Old title"
         document.parse("<title>New title</title>")
-        document.title.should == "New title"
+        document.title.should == "Old title"
       end
 
       it "should save the element text into an accessor" do
