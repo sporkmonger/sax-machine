@@ -6,7 +6,6 @@ module SAXMachine
 
     def initialize(object)
       @object = object
-      @parsed_configs = {}
     end
 
     def characters(string)
@@ -51,7 +50,6 @@ module SAXMachine
         @collection_handler.end_element(name)
 
       elsif characaters_captured?
-        mark_as_parsed
         @object.send(@element_config.setter, @value)
       end
 
@@ -75,10 +73,7 @@ module SAXMachine
 
     def parse_element_attributes(element_configs)
       element_configs.each do |ec|
-        unless parsed_config?(ec)
-          @object.send(ec.setter, ec.value_from_attrs(@attrs))
-          mark_as_parsed(ec)
-        end
+        @object.send(ec.setter, ec.value_from_attrs(@attrs))
       end
       @element_config = nil
     end
@@ -86,16 +81,6 @@ module SAXMachine
     def set_element_config_for_element_value
       @value = ""
       @element_config = sax_config.element_config_for_tag(@name, @attrs)
-    end
-
-    def mark_as_parsed(element_config=nil)
-      element_config ||= @element_config
-      @parsed_configs[element_config] = true unless element_config.collection?
-    end
-
-    def parsed_config?(element_config=nil)
-      element_config ||= @element_config
-      @parsed_configs[element_config]
     end
 
     def reset_current_collection
