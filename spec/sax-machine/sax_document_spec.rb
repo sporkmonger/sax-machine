@@ -326,6 +326,11 @@ describe "SAXMachine" do
           document = @klass.parse("<x:b>hello</x:b>")
           document.b.should == 'hello'
         end
+
+        it "should get the namespaced element even it's not first" do
+          document = @klass.parse("<root xmlns:a='urn:test'><a>foo</a><a>foo</a><a:a>bar</a:a></root>")
+          document.a.should == 'bar'
+        end
       end
       
     end
@@ -410,13 +415,16 @@ describe "SAXMachine" do
   end
   
   describe "full example" do
+    XMLNS_ATOM = "http://www.w3.org/2005/Atom"
+    XMLNS_FEEDBURNER = "http://rssnamespace.org/feedburner/ext/1.0"
+
     before :each do
       @xml = File.read('spec/sax-machine/atom.xml')
       class AtomEntry
         include SAXMachine
         element :title
         element :name, :as => :author
-        element "feedburner:origLink", :as => :url
+        element :origLink, :as => :orig_link, :xmlns => XMLNS_FEEDBURNER
         element :summary
         element :content
         element :published
@@ -427,13 +435,23 @@ describe "SAXMachine" do
         element :title
         element :link, :value => :href, :as => :url, :with => {:type => "text/html"}
         element :link, :value => :href, :as => :feed_url, :with => {:type => "application/atom+xml"}
-        elements :entry, :as => :entries, :class => AtomEntry
+        elements :entry, :as => :entries, :class => AtomEntry, :xmlns => XMLNS_ATOM
       end
     end # before
     
     it "should parse the url" do
       f = Atom.parse(@xml)
       f.url.should == "http://www.pauldix.net/"
+    end
+
+    it "should parse all entries" do
+      f = Atom.parse(@xml)
+      f.entries.length.should == 5
+    end
+
+    it "should parse the feedburner:origLink" do
+      f = Atom.parse(@xml)
+      f.entries[0].orig_link.should == 'http://www.pauldix.net/2008/09/marshal-data-to.html'
     end
   end
 end
