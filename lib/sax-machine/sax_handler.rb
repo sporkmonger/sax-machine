@@ -5,9 +5,9 @@ module SAXMachine
   class SAXHandler < Nokogiri::XML::SAX::Document
     attr_reader :object
 
-    def initialize(object)
+    def initialize(object, nsstack=nil)
       @object = object
-      @nsstack = nil
+      @nsstack = nsstack || NSStack.new
     end
 
     def characters(string)
@@ -23,7 +23,7 @@ module SAXMachine
     end
 
     def start_element(name, attrs = [])
-      
+
       @name   = name
       @attrs  = attrs.map { |a| SAXHandler.decode_xml(a) }
       @nsstack  = NSStack.new(@nsstack, @attrs)
@@ -31,8 +31,8 @@ module SAXMachine
       if parsing_collection?
         @collection_handler.start_element(@name, @attrs)
 
-      elsif @collection_config = sax_config.collection_config(@name)
-        @collection_handler = @collection_config.handler
+      elsif @collection_config = sax_config.collection_config(@name, @nsstack)
+        @collection_handler = @collection_config.handler(@nsstack)
         @collection_handler.start_element(@name, @attrs)
 
       elsif (element_configs = sax_config.element_configs_for_attribute(@name, @attrs)).any?
