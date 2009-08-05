@@ -3,6 +3,7 @@ module SAXMachine
     
     class CollectionConfig
       attr_reader :name
+      attr_reader :default_xmlns
       
       def initialize(name, options)
         @name   = name.to_s
@@ -13,9 +14,17 @@ module SAXMachine
                   when String then [options[:xmlns]]
                   else nil
                   end
+        @default_xmlns = options[:default_xmlns]
+        if @default_xmlns && @xmlns && !@xmlns.include?('')
+          @xmlns << ''
+        end
       end
       
       def handler(nsstack)
+        if nsstack.nil? || nsstack[''] == ''
+          nsstack = NSStack.new(nsstack, nsstack)
+          nsstack[''] = @default_xmlns
+        end
         SAXHandler.new(@class.new, nsstack)
       end
       
