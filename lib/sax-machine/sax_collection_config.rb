@@ -15,7 +15,7 @@ module SAXMachine
                   else nil
                   end
         @default_xmlns = options[:default_xmlns]
-        if @default_xmlns && !@xmlns.include?('')
+        if @default_xmlns && @xmlns && !@xmlns.include?('')
           @xmlns << ''
         end
       end
