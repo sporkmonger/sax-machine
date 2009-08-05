@@ -331,6 +331,30 @@ describe "SAXMachine" do
           document = @klass.parse("<root xmlns:a='urn:test'><a>foo</a><a>foo</a><a:a>bar</a:a></root>")
           document.a.should == 'bar'
         end
+
+        context "when passing a default namespace" do
+          before :each do
+            @xmlns = 'urn:test'
+            class Inner
+              include SAXMachine
+              element :a, :xmlns => @xmlns
+            end
+            @outer = Class.new do
+              include SAXMachine
+              elements :root, :default_xmlns => @xmlns, :class => Inner
+            end
+          end
+
+          it "should replace the empty namespace with a default" do
+            document = @outer.parse("<root><a>Hello</a></root>")
+            document.root[0].a.should == 'Hello'
+          end
+
+          it "should not replace another namespace" do
+            document = @outer.parse("<root xmlns='urn:test2'><a>Hello</a></root>")
+            document.root[0].a.should == 'Hello'
+          end
+        end
       end
       
     end
