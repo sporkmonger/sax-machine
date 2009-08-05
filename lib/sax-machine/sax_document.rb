@@ -43,11 +43,15 @@ module SAXMachine
     end
 
     def columns
-      sax_config.top_level_elements
+      r = []
+      sax_config.top_level_elements.each do |name, ecs|
+        r += ecs
+      end
+      r
     end
 
     def column(sym)
-      columns.select{|c| c.column == sym}[0]
+      sax_config.top_level_elements[sym.to_s][0]
     end
 
     def data_class(sym)
