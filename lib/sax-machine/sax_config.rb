@@ -18,11 +18,19 @@ module SAXMachine
       @collection_elements << CollectionConfig.new(name, options)
     end
 
-    def collection_config(name)
-      @collection_elements.detect { |ce| ce.name.to_s == name.to_s }
+    def collection_config(name, nsstack)
+      prefix, name = name.split(':', 2)
+      prefix, name = nil, prefix unless name  # No prefix
+      namespace = nsstack[prefix]
+
+      @collection_elements.detect { |ce|
+        ce.name.to_s == name.to_s &&
+        ce.xmlns_match?(namespace)
+      }
     end
 
     def element_configs_for_attribute(name, attrs)
+      name = name.split(':', 2).last
       @top_level_elements.select do |element_config|
         element_config.name == name &&
         element_config.has_value_and_attrs_match?(attrs)
