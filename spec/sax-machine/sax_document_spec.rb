@@ -549,8 +549,9 @@ eoxml
     context "when parsing a Twitter example" do
       before :all do
         
-        RSS_XMLNS = 'http://purl.org/rss/1.0/'
-        ATOM_XMLNS = 'http://www.w3.org/2005/Atom'
+        RSS_XMLNS = ['http://purl.org/rss/1.0/', '']
+        
+        ATOM_XMLNS = 'http://www.w3.org/2005/Atom' unless defined? ATOM_XMLNS
         class Link
           include SAXMachine
         end
@@ -565,21 +566,20 @@ eoxml
         
         class Feed
           include SAXMachine
-          element   :title,           :xmlns => RSS_XMLNS,  :as => :title
-          element   :link,            :xmlns => RSS_XMLNS,  :as => :feed_link
-          elements  :item,            :xmlns => RSS_XMLNS,  :as => :entries,         :class => Entry
-          element   :title,           :xmlns => ATOM_XMLNS, :as => :title
-          elements  :link,            :xmlns => ATOM_XMLNS, :as => :links,           :class => Link
-          element   :id,              :xmlns => ATOM_XMLNS, :as => :feed_id
+          element   :title,        :xmlns => RSS_XMLNS,  :as => :title
+          element   :link,         :xmlns => RSS_XMLNS,  :as => :feed_link
+          elements  :item,         :xmlns => RSS_XMLNS,  :as => :entries,         :class => Entry
+          element   :title,        :xmlns => ATOM_XMLNS, :as => :title
+          elements  :link,         :xmlns => ATOM_XMLNS, :as => :links,           :class => Link
         end
         
         @document = Feed.parse(<<-eoxml)
 <?xml version="1.0" encoding="UTF-8"?>
         <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
           <channel>
+            <atom:link type="application/rss+xml" rel="self" href="http://twitter.com/statuses/user_timeline/5381582.rss"/>
             <title>Twitter / julien51</title>
             <link>http://twitter.com/julien51</link>
-            <atom:link type="application/rss+xml" rel="self" href="http://twitter.com/statuses/user_timeline/5381582.rss"/>
             <description>Twitter updates from julien / julien51.</description>
             <language>en-us</language>
             <ttl>40</ttl>
@@ -604,8 +604,9 @@ eoxml
       it "should parse the title" do
         @document.title.should == 'Twitter / julien51'
       end
+      
       it "should find an entry" do
-        @document.entries.length.should == 1
+        @document.entries.length.should == 2
       end
     end
   end
