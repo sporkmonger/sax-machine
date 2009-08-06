@@ -344,7 +344,7 @@ describe "SAXMachine" do
         end
 
         context "when passing a default namespace" do
-          before :each do
+          before :all do
             @xmlns = 'urn:test'
             class Inner
               include SAXMachine
@@ -369,11 +369,55 @@ describe "SAXMachine" do
       end
       
     end
+
+    describe "when desiring sax events" do
+      XHTML_XMLNS = "http://www.w3.org/1999/xhtml"
+
+      before :all do
+        @klass = Class.new do
+          include SAXMachine
+          elements :body, :events => true
+        end
+      end
+
+      it "should parse a simple child" do
+        document = @klass.parse("<body><p/></body>")
+        document.body.should == [[:start_element, "", "p", []],
+                                 [:end_element, "", "p"]]
+      end
+      it "should parse a simple child with text" do
+        document = @klass.parse("<body><p>Hello</p></body>")
+        document.body.should == [[:start_element, "", "p", []],
+                                 [:chars, "Hello"],
+                                 [:end_element, "", "p"]]
+      end
+      it "should parse nested children" do
+        document = @klass.parse("<body><p><span/></p></body>")
+        document.body.should == [[:start_element, "", "p", []],
+                                 [:start_element, "", "span", []],
+                                 [:end_element, "", "span"],
+                                 [:end_element, "", "p"]]
+      end
+      it "should parse multiple children" do
+        document = @klass.parse("<body><p>Hello</p><p>World</p></body>")
+        document.body.should == [[:start_element, "", "p", []],
+                                 [:chars, "Hello"],
+                                 [:end_element, "", "p"],
+                                 [:start_element, "", "p", []],
+                                 [:chars, "World"],
+                                 [:end_element, "", "p"]]
+      end
+      it "should pass namespaces" do
+        document = @klass.parse("<body xmlns='#{XHTML_XMLNS}'><p/></body>")
+        document.body.should == [[:start_element, XHTML_XMLNS, "p", []],
+                                 [:end_element, XHTML_XMLNS, "p"]]
+      end
+    end
   end
   
   describe "elements" do
     describe "when parsing multiple elements" do
-      before :each do
+      before :all do
         @klass = Class.new do
           include SAXMachine
           elements :entry, :as => :entries
