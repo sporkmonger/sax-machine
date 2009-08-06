@@ -542,34 +542,67 @@ eoxml
         @document.link.should == 'http://feeds.delicious.com/v2/rss/tag/pubsubhubbub?count=15'
       end
     end
+  end  
+  
+  describe "yet another full example" do
+  
     context "when parsing a Twitter example" do
       before :all do
-        @document = Root.parse(<<-eoxml).channels[0]
+        
+        RSS_XMLNS = 'http://purl.org/rss/1.0/'
+        ATOM_XMLNS = 'http://www.w3.org/2005/Atom'
+        class Link
+          include SAXMachine
+        end
+        
+        class Entry
+          include SAXMachine
+          element   :title,        :xmlns => RSS_XMLNS
+          element   :link,         :xmlns => RSS_XMLNS,   :as => :entry_link
+          element   :title,        :xmlns => ATOM_XMLNS,  :as => :title
+          elements  :link,         :xmlns => ATOM_XMLNS,  :as => :links,      :class => Link
+        end
+        
+        class Feed
+          include SAXMachine
+          element   :title,           :xmlns => RSS_XMLNS,  :as => :title
+          element   :link,            :xmlns => RSS_XMLNS,  :as => :feed_link
+          elements  :item,            :xmlns => RSS_XMLNS,  :as => :entries,         :class => Entry
+          element   :title,           :xmlns => ATOM_XMLNS, :as => :title
+          elements  :link,            :xmlns => ATOM_XMLNS, :as => :links,           :class => Link
+          element   :id,              :xmlns => ATOM_XMLNS, :as => :feed_id
+        end
+        
+        @document = Feed.parse(<<-eoxml)
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
- <channel>
- <atom:link type="application/rss+xml" rel="self" href="http://twitter.com/statuses/user_timeline/5381582.rss"/>
- <title>Twitter / julien51</title>
- <link>http://twitter.com/julien51</link>
- <description>Twitter updates from julien / julien51.</description>
- <language>en-us</language>
- <ttl>40</ttl>
- <item>
- <title>julien51: @github : I get an error when trying to build one of my gems (julien51-sax-machine), it seems related to another gem's gemspec.</title>
- <description>julien51: @github : I get an error when trying to build one of my gems (julien51-sax-machine), it seems related to another gem's gemspec.</description>
- <pubDate>Thu, 30 Jul 2009 01:00:30 +0000</pubDate>
- <guid>http://twitter.com/julien51/statuses/2920716033</guid>
- <link>http://twitter.com/julien51/statuses/2920716033</link>
- </item>
-</channel>
-</rss>
+        <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+          <channel>
+            <title>Twitter / julien51</title>
+            <link>http://twitter.com/julien51</link>
+            <atom:link type="application/rss+xml" rel="self" href="http://twitter.com/statuses/user_timeline/5381582.rss"/>
+            <description>Twitter updates from julien / julien51.</description>
+            <language>en-us</language>
+            <ttl>40</ttl>
+          <item>
+            <title>julien51: @github :  I get an error when trying to build one of my gems (julien51-sax-machine), it seems related to another gem's gemspec.</title>
+            <description>julien51: @github :  I get an error when trying to build one of my gems (julien51-sax-machine), it seems related to another gem's gemspec.</description>
+            <pubDate>Thu, 30 Jul 2009 01:00:30 +0000</pubDate>
+            <guid>http://twitter.com/julien51/statuses/2920716033</guid>
+            <link>http://twitter.com/julien51/statuses/2920716033</link>
+          </item>
+          <item>
+            <title>julien51: Hum, San Francisco's summer are delightful. http://bit.ly/VeXt4</title>
+            <description>julien51: Hum, San Francisco's summer are delightful. http://bit.ly/VeXt4</description>
+            <pubDate>Wed, 29 Jul 2009 23:07:32 +0000</pubDate>
+            <guid>http://twitter.com/julien51/statuses/2918869948</guid>
+            <link>http://twitter.com/julien51/statuses/2918869948</link>
+          </item>
+          </channel>
+        </rss>
 eoxml
       end
       it "should parse the title" do
         @document.title.should == 'Twitter / julien51'
-      end
-      it "should parse the link" do
-        @document.link.should == 'http://twitter.com/statuses/user_timeline/5381582.rss'
       end
       it "should find an entry" do
         @document.entries.length.should == 1
