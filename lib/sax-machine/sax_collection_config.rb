@@ -21,7 +21,7 @@ module SAXMachine
       end
       
       def handler(nsstack)
-        if nsstack.nil? || nsstack[''] == ''
+        if @default_xmlns && (nsstack.nil? || nsstack[''] == '')
           nsstack = NSStack.new(nsstack, nsstack)
           nsstack[''] = @default_xmlns
         end

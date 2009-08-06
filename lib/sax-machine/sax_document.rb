@@ -51,7 +51,7 @@ module SAXMachine
     end
 
     def column(sym)
-      sax_config.top_level_elements[sym.to_s][0]
+      (sax_config.top_level_elements[sym.to_s] || []).first
     end
 
     def data_class(sym)
