@@ -11,11 +11,17 @@ module SAXMachine
     end
 
     def start_element(name, attrs = [])
-      @events << [:start_element, "", name, attrs]
+      @nsstack = NSStack.new(@nsstack, attrs)
+      prefix, name = name.split(':', 2)
+      prefix, name = nil, prefix unless name
+      @events << [:start_element, @nsstack[prefix], name, attrs]
     end
 
     def end_element(name)
-      @events << [:end_element, "", name]
+      prefix, name = name.split(':', 2)
+      prefix, name = nil, prefix unless name
+      @events << [:end_element, @nsstack[prefix], name]
+      @nsstack = @nsstack.pop
     end
 
     def characters(string)
