@@ -33,8 +33,9 @@ module SAXMachine
 
       elsif @collection_config = sax_config.collection_config(@name, @nsstack)
         @collection_handler = @collection_config.handler(@nsstack)
-        @collection_handler.start_element(@name, @attrs)
-
+        if @object.class != @collection_handler.object.class
+          @collection_handler.start_element(@name, @attrs)
+        end
       elsif (element_configs = sax_config.element_configs_for_attribute(@name, @attrs)).any?
         parse_element_attributes(element_configs)
         set_element_config_for_element_value
