@@ -68,7 +68,7 @@ module SAXMachine
     
     def elements(name, options = {})
       options[:as] ||= name
-      if options[:class]
+      if options[:class] || options[:events]
         sax_config.add_collection_element(name, options)
       else
         class_eval <<-SRC

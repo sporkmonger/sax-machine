@@ -18,6 +18,7 @@ module SAXMachine
         if @default_xmlns && @xmlns && !@xmlns.include?('')
           @xmlns << ''
         end
+        @record_events = options[:events]
       end
       
       def handler(nsstack)
@@ -25,7 +26,11 @@ module SAXMachine
           nsstack = NSStack.new(nsstack, nsstack)
           nsstack[''] = @default_xmlns
         end
-        SAXHandler.new(@class.new, nsstack)
+        unless @record_events
+          SAXHandler.new(@class.new, nsstack)
+        else
+          SAXEventRecorder.new(nsstack)
+        end
       end
       
       def accessor
