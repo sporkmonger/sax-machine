@@ -460,35 +460,35 @@ describe "SAXMachine" do
 
       it "should parse a simple child" do
         document = @klass.parse("<body><p/></body>")
-        document.body.should == [[:start_element, "", "p", []],
-                                 [:end_element, "", "p"]]
+        document.body[0].should == [[:start_element, "", "p", []],
+                                    [:end_element, "", "p"]]
       end
       it "should parse a simple child with text" do
         document = @klass.parse("<body><p>Hello</p></body>")
-        document.body.should == [[:start_element, "", "p", []],
-                                 [:chars, "Hello"],
-                                 [:end_element, "", "p"]]
+        document.body[0].should == [[:start_element, "", "p", []],
+                                    [:chars, "Hello"],
+                                    [:end_element, "", "p"]]
       end
       it "should parse nested children" do
         document = @klass.parse("<body><p><span/></p></body>")
-        document.body.should == [[:start_element, "", "p", []],
-                                 [:start_element, "", "span", []],
-                                 [:end_element, "", "span"],
-                                 [:end_element, "", "p"]]
+        document.body[0].should == [[:start_element, "", "p", []],
+                                    [:start_element, "", "span", []],
+                                    [:end_element, "", "span"],
+                                    [:end_element, "", "p"]]
       end
       it "should parse multiple children" do
         document = @klass.parse("<body><p>Hello</p><p>World</p></body>")
-        document.body.should == [[:start_element, "", "p", []],
-                                 [:chars, "Hello"],
-                                 [:end_element, "", "p"],
-                                 [:start_element, "", "p", []],
-                                 [:chars, "World"],
-                                 [:end_element, "", "p"]]
+        document.body[0].should == [[:start_element, "", "p", []],
+                                    [:chars, "Hello"],
+                                    [:end_element, "", "p"],
+                                    [:start_element, "", "p", []],
+                                    [:chars, "World"],
+                                    [:end_element, "", "p"]]
       end
       it "should pass namespaces" do
         document = @klass.parse("<body xmlns='#{XHTML_XMLNS}'><p/></body>")
-        document.body.should == [[:start_element, XHTML_XMLNS, "p", []],
-                                 [:end_element, XHTML_XMLNS, "p"]]
+        document.body[0].should == [[:start_element, XHTML_XMLNS, "p", []],
+                                    [:end_element, XHTML_XMLNS, "p"]]
       end
     end
   end
