@@ -8,5 +8,5 @@ require "sax-machine/sax_config"
 require "sax-machine/sax_event_recorder"
 
 module SAXMachine
-  VERSION = "0.0.20"
+  VERSION = "0.0.21"
 end
