@@ -10,6 +10,7 @@ module SAXMachine
     unless @parser
       sax_handler = SAXHandler.new(self)
       @parser = Nokogiri::XML::SAX::PushParser.new(sax_handler)
+      @parser.options |= Nokogiri::XML::ParseOptions::RECOVER if @parser.respond_to?(:options)
     end
     @parser << xml_text
     self
