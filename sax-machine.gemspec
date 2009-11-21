@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{sax-machine}
+  s.name = %q{julien51-sax-machine}
   s.version = "0.0.22"
  
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
@@ -17,11 +17,12 @@ Gem::Specification.new do |s|
     "lib/sax-machine/sax_handler.rb",
     "lib/sax-machine/ns_stack.rb",
     "lib/sax-machine/sax_event_recorder.rb",
-    "README.textile", "Rakefile",
+    "README.textile", 
+    "Rakefile",
     "spec/spec.opts",
     "spec/spec_helper.rb",
     "spec/sax-machine/sax_document_spec.rb"]
-  s.homepage = %q{http://github.com/pauldix/sax-machine}
+  s.homepage = %q{http://github.com/julien51/sax-machine}
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.1}
   s.summary = %q{Declarative SAX Parsing with Nokogiri}
