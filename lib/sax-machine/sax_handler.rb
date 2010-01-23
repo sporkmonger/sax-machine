@@ -26,10 +26,10 @@ module SAXMachine
       characters(string)
     end
 
-    def start_element(name, attrs = [])
+    def start_element(name, attrs = nil)
 
       @name   = name
-      @attrs  = attrs.map { |a| SAXHandler.decode_xml(a) }
+      @attrs  = attrs ? attrs.map { |a| SAXHandler.decode_xml(a) } : nil
       @nsstack  = NSStack.new(@nsstack, @attrs)
 
       if parsing_collection?

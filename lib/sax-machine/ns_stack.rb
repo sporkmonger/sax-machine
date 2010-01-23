@@ -2,11 +2,12 @@ module SAXMachine
   class NSStack < Hash
     XMLNS = 'xmlns'
 
-    def initialize(parent=nil, attrs=[])
+    def initialize(parent=nil, attrs=nil)
       # Initialize
       super()
       @parent = parent
 
+      return self unless attrs
       # Parse attributes
       attrs.each do |attr|
         if attr.kind_of?(Array)

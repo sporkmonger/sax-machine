@@ -52,7 +52,15 @@ module SAXMachine
       
       def attrs_match?(attrs)
         if @with
-          @with == (@with & attrs)
+          if attrs.nil?
+            if @with.empty?
+              true
+            else
+              false
+            end
+          else
+            @with == (@with & attrs)
+          end
         else
           true
         end

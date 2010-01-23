@@ -10,7 +10,7 @@ module SAXMachine
       @events[1..-2]
     end
 
-    def start_element(name, attrs = [])
+    def start_element(name, attrs = nil)
       @nsstack = NSStack.new(@nsstack, attrs)
       prefix, name = name.split(COLON, 2)
       prefix, name = nil, prefix unless name

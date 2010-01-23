@@ -25,7 +25,8 @@ module SAXMachine
       prefix, name = nil, prefix unless name  # No prefix
       namespace = nsstack[prefix]
 
-      (@collection_elements[name.to_s] || []).detect { |ce|
+      return nil unless (a = @collection_elements[name.to_s])
+      a.detect { |ce|
         ce.name.to_s == name.to_s &&
         ce.xmlns_match?(namespace)
       }
@@ -33,7 +34,9 @@ module SAXMachine
 
     def element_configs_for_attribute(name, attrs)
       name = name.split(COLON, 2).last
-      (@top_level_elements[name.to_s] || []).select do |element_config|
+
+      return [] unless (a = @top_level_elements[name.to_s])
+      a.select do |element_config|
         element_config.has_value_and_attrs_match?(attrs)
       end
     end
@@ -43,7 +46,8 @@ module SAXMachine
       prefix, name = nil, prefix unless name  # No prefix
       namespace = nsstack[prefix]
 
-      (@top_level_elements[name.to_s] || []).detect do |element_config|
+      return nil unless (a = @top_level_elements[name.to_s])
+      a.detect do |element_config|
         element_config.xmlns_match?(namespace) &&
         element_config.attrs_match?(attrs)
       end
