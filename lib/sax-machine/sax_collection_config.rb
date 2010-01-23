@@ -15,16 +15,16 @@ module SAXMachine
                   else nil
                   end
         @default_xmlns = options[:default_xmlns]
-        if @default_xmlns && @xmlns && !@xmlns.include?('')
-          @xmlns << ''
+        if @default_xmlns && @xmlns && !@xmlns.include?(EMPTY_STRING)
+          @xmlns << EMPTY_STRING
         end
         @record_events = options[:events]
       end
       
       def handler(nsstack)
-        if @default_xmlns && (nsstack.nil? || nsstack[''] == '')
+        if @default_xmlns && (nsstack.nil? || nsstack[EMPTY_STRING] == EMPTY_STRING)
           nsstack = NSStack.new(nsstack, nsstack)
-          nsstack[''] = @default_xmlns
+          nsstack[EMPTY_STRING] = @default_xmlns
         end
         unless @record_events
           SAXHandler.new(@class.new, nsstack)

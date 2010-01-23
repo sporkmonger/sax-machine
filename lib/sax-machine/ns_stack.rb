@@ -1,5 +1,7 @@
 module SAXMachine
   class NSStack < Hash
+    XMLNS = 'xmlns'
+
     def initialize(parent=nil, attrs=[])
       # Initialize
       super()
@@ -10,7 +12,7 @@ module SAXMachine
         if attr.kind_of?(Array)
           k, v = attr
           case k
-          when 'xmlns' then self[''] = v
+          when XMLNS then self[EMPTY_STRING] = v
           when /^xmlns:(.+)/ then self[$1] = v
           end
         end
@@ -27,7 +29,7 @@ module SAXMachine
         @parent[name]
       else
         # Undefined, empty namespace
-        ''
+        EMPTY_STRING
       end
     end
 
