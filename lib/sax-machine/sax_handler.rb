@@ -14,7 +14,11 @@ module SAXMachine
       if parsing_collection?
         @collection_handler.characters(string)
       elsif @element_config
-        @value << string
+        if !@value || @value == EMPTY_STRING
+          @value = string
+        else
+          @value << string
+        end
       end
     end
 
@@ -46,7 +50,7 @@ module SAXMachine
     end
 
     def end_element(name)
-      if parsing_collection? && @collection_config.name == name.split(':').last
+      if parsing_collection? && @collection_config.name == name.split(COLON).last
         @collection_handler.end_element(name)
         @object.send(@collection_config.accessor) << @collection_handler.object
         reset_current_collection
@@ -85,7 +89,7 @@ module SAXMachine
     end
 
     def set_element_config_for_element_value
-      @value = ""
+      @value = EMPTY_STRING
       @element_config = sax_config.element_config_for_tag(@name, @attrs, @nsstack)
     end
 

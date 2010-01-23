@@ -21,7 +21,7 @@ module SAXMachine
     end
 
     def collection_config(name, nsstack)
-      prefix, name = name.split(':', 2)
+      prefix, name = name.split(COLON, 2)
       prefix, name = nil, prefix unless name  # No prefix
       namespace = nsstack[prefix]
 
@@ -32,14 +32,14 @@ module SAXMachine
     end
 
     def element_configs_for_attribute(name, attrs)
-      name = name.split(':', 2).last
+      name = name.split(COLON, 2).last
       (@top_level_elements[name.to_s] || []).select do |element_config|
         element_config.has_value_and_attrs_match?(attrs)
       end
     end
 
     def element_config_for_tag(name, attrs, nsstack)
-      prefix, name = name.split(':', 2)
+      prefix, name = name.split(COLON, 2)
       prefix, name = nil, prefix unless name  # No prefix
       namespace = nsstack[prefix]
 

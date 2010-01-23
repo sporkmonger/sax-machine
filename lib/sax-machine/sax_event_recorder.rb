@@ -12,13 +12,13 @@ module SAXMachine
 
     def start_element(name, attrs = [])
       @nsstack = NSStack.new(@nsstack, attrs)
-      prefix, name = name.split(':', 2)
+      prefix, name = name.split(COLON, 2)
       prefix, name = nil, prefix unless name
       @events << [:start_element, @nsstack[prefix], name, attrs]
     end
 
     def end_element(name)
-      prefix, name = name.split(':', 2)
+      prefix, name = name.split(COLON, 2)
       prefix, name = nil, prefix unless name
       @events << [:end_element, @nsstack[prefix], name]
       @nsstack = @nsstack.pop

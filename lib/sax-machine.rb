@@ -10,3 +10,6 @@ require "sax-machine/sax_event_recorder"
 module SAXMachine
   VERSION = "0.0.21"
 end
+
+EMPTY_STRING = ''
+COLON = ':'
