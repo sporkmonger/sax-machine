@@ -46,19 +46,18 @@ module SAXMachine
       end
 
       def value_from_attrs(attrs)
-        attrs.index(@value) ? attrs[attrs.index(@value) + 1] : nil
+        pair = attrs.detect { |k, v| k == @value }
+        pair ? pair.last : nil
       end
 
       def attrs_match?(attrs)
         if @with
           if attrs.nil?
-            if @with.empty?
-              true
-            else
-              false
-            end
+            # If no attributes, match only if the :with clause is empty.
+            @with.empty?
           else
-            @with == (@with & attrs)
+            # Attributes must match :with clause.
+            attrs.include?(@with)
           end
         else
           true

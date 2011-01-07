@@ -27,14 +27,15 @@ module SAXMachine
     end
 
     def start_element(name, attrs = nil)
-
       @name   = name
-      @attrs  = attrs ? attrs.map { |a| SAXHandler.decode_xml(a) } : nil
+      @attrs  = (attrs || []).map do |k, v|
+        # Do we actually need to decode the attribute key or just the value?
+        [SAXHandler.decode_xml(k), SAXHandler.decode_xml(v)]
+      end
       @nsstack  = NSStack.new(@nsstack, @attrs)
 
       if parsing_collection?
         @collection_handler.start_element(@name, @attrs)
-
       elsif @collection_config = sax_config.collection_config(@name, @nsstack)
         @collection_handler = @collection_config.handler(@nsstack)
         if @object.class != @collection_handler.object.class
@@ -43,21 +44,18 @@ module SAXMachine
       elsif (element_configs = sax_config.element_configs_for_attribute(@name, @attrs)).any?
         parse_element_attributes(element_configs)
         set_element_config_for_element_value
-
       else
         set_element_config_for_element_value
       end
     end
 
     def end_element(name)
-      if parsing_collection? && @collection_config.name == name.split(COLON).last
+      if parsing_collection? && @collection_config.name == name.split(COLON, 2).last
         @collection_handler.end_element(name)
         @object.send(@collection_config.accessor) << @collection_handler.object
         reset_current_collection
-
       elsif parsing_collection?
         @collection_handler.end_element(name)
-
       elsif characaters_captured?
         @object.send(@element_config.setter, @value)
       end
@@ -72,13 +70,6 @@ module SAXMachine
 
     def parsing_collection?
       !@collection_handler.nil?
-    end
-
-    def parse_collection_instance_attributes
-      instance = @collection_handler.object
-      @attrs.each_with_index do |attr_name,index|
-        instance.send("#{attr_name}=", @attrs[index + 1]) if index % 2 == 0 && instance.methods.include?("#{attr_name}=")
-      end
     end
 
     def parse_element_attributes(element_configs)
