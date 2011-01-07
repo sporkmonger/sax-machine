@@ -42,6 +42,7 @@ describe "SAXMachine" do
           @document = @klass.new
           @document.date = DateTime.now.to_s
         end
+
         it "should be available" do
           @klass.data_class(:date).should == DateTime
         end
@@ -465,12 +466,14 @@ describe "SAXMachine" do
         document.body[0].should == [[:start_element, "", "p", []],
                                     [:end_element, "", "p"]]
       end
+
       it "should parse a simple child with text" do
         document = @klass.parse("<body><p>Hello</p></body>")
         document.body[0].should == [[:start_element, "", "p", []],
                                     [:chars, "Hello"],
                                     [:end_element, "", "p"]]
       end
+
       it "should parse nested children" do
         document = @klass.parse("<body><p><span/></p></body>")
         document.body[0].should == [[:start_element, "", "p", []],
@@ -478,6 +481,7 @@ describe "SAXMachine" do
                                     [:end_element, "", "span"],
                                     [:end_element, "", "p"]]
       end
+
       it "should parse multiple children" do
         document = @klass.parse("<body><p>Hello</p><p>World</p></body>")
         document.body[0].should == [[:start_element, "", "p", []],
@@ -487,6 +491,7 @@ describe "SAXMachine" do
                                     [:chars, "World"],
                                     [:end_element, "", "p"]]
       end
+
       it "should pass namespaces" do
         document = @klass.parse("<body xmlns='#{XHTML_XMLNS}'><p/></body>")
         document.body[0].should == [[:start_element, XHTML_XMLNS, "p", []],
@@ -518,7 +523,7 @@ describe "SAXMachine" do
         element :link, :value => :href, :as => :feed_url, :with => {:type => "application/atom+xml"}
         elements :entry, :as => :entries, :class => AtomEntry, :xmlns => XMLNS_ATOM
       end
-    end # before
+    end
 
     it "should parse the url" do
       f = Atom.parse(@xml)
@@ -537,9 +542,9 @@ describe "SAXMachine" do
   end
 
   describe "another full example" do
-
     RSS_XMLNS = 'http://purl.org/rss/1.0/'
     ATOM_XMLNS = 'http://www.w3.org/2005/Atom'
+
     class Entry
       include SAXMachine
       element :title, :xmlns => RSS_XMLNS
@@ -547,6 +552,7 @@ describe "SAXMachine" do
       element :link, :xmlns => RSS_XMLNS
       element :link, :xmlns => ATOM_XMLNS, :value => 'href'
     end
+
     class Channel
       include SAXMachine
       element :title, :xmlns => RSS_XMLNS
@@ -556,6 +562,7 @@ describe "SAXMachine" do
       elements :entry, :as => :entries, :class => Entry
       elements :item, :as => :entries, :class => Entry
     end
+
     class Root
       include SAXMachine
       elements :rss, :as => :channels, :default_xmlns => RSS_XMLNS, :class => Channel
@@ -564,7 +571,7 @@ describe "SAXMachine" do
 
     context "when parsing a complex example" do
       before :all do
-        @document = Root.parse(<<-eoxml).channels[0]
+        @document = Root.parse(<<-XML).channels[0]
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"
                    xmlns:content="http://purl.org/rss/1.0/modules/content/"
@@ -579,11 +586,13 @@ describe "SAXMachine" do
     <description>recent bookmarks tagged pubsubhubbub</description>
   </channel>
 </rss>
-eoxml
+XML
       end
+
       it "should parse the title" do
         @document.title.should == 'Delicious/tag/pubsubhubbub'
       end
+
       it "should parse the link" do
         @document.link.should == 'http://feeds.delicious.com/v2/rss/tag/pubsubhubbub?count=15'
       end
@@ -591,13 +600,11 @@ eoxml
   end
 
   describe "yet another full example" do
-
     context "when parsing a Twitter example" do
       before :all do
-
         RSS_XMLNS = ['http://purl.org/rss/1.0/', '']
-
         ATOM_XMLNS = 'http://www.w3.org/2005/Atom' unless defined? ATOM_XMLNS
+
         class Link
           include SAXMachine
         end
@@ -619,7 +626,7 @@ eoxml
           elements  :link,         :xmlns => ATOM_XMLNS, :as => :links,           :class => Link
         end
 
-        @document = Feed.parse(<<-eoxml)
+        @document = Feed.parse(<<-XML)
 <?xml version="1.0" encoding="UTF-8"?>
         <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
           <channel>
@@ -645,8 +652,9 @@ eoxml
           </item>
           </channel>
         </rss>
-eoxml
+XML
       end
+
       it "should parse the title" do
         @document.title.should == 'Twitter / julien51'
       end
