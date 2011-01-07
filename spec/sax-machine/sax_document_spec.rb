@@ -32,6 +32,7 @@ describe "SAXMachine" do
         document.title = "Title"
         document.title.should == "Title **"
       end
+
       describe "the class attribute" do
         before(:each) do
           @klass = Class.new do
@@ -45,6 +46,7 @@ describe "SAXMachine" do
           @klass.data_class(:date).should == DateTime
         end
       end
+
       describe "the required attribute" do
         it "should be available" do
           @klass = Class.new do
@@ -62,7 +64,7 @@ describe "SAXMachine" do
         document.title.should == "Title"
       end
 
-      it "should *not* overwrite the value when the element is present (new behaviour!)" do
+      it "should not overwrite the value when the element is present" do
         document = @klass.new
         document.title = "Old title"
         document.parse("<title>New title</title>")
@@ -216,7 +218,7 @@ describe "SAXMachine" do
             document.second.should == "second match"
           end
         end
-      end # using the 'with' option
+      end
 
       describe "using the 'value' option" do
         before :each do
