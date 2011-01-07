@@ -1,11 +1,11 @@
-require "nokogiri"
+require 'nokogiri'
 
 module SAXMachine
-  
+
   def self.included(base)
     base.extend ClassMethods
   end
-  
+
   def parse(xml_text)
     unless @parser
       sax_handler = SAXHandler.new(self)
@@ -22,7 +22,7 @@ module SAXMachine
     end
     self
   end
-  
+
   module ClassMethods
 
     def parse(xml_text)
@@ -31,11 +31,11 @@ module SAXMachine
       # behaviour?
       new.parse(xml_text)
     end
-    
+
     def element(name, options = {})
       options[:as] ||= name
       sax_config.add_top_level_element(name, options)
-      
+
       # we only want to insert the getter and setter if they haven't defined it from elsewhere.
       # this is how we allow custom parsing behavior. So you could define the setter
       # and have it parse the string into a date or whatever.
@@ -66,7 +66,7 @@ module SAXMachine
     def column_names
       columns.map{|e| e.column}
     end
-    
+
     def elements(name, options = {})
       options[:as] ||= name
       if options[:class] || options[:events]
@@ -79,7 +79,7 @@ module SAXMachine
         SRC
         sax_config.add_top_level_element(name, options.merge(:collection => true))
       end
-      
+
       if !instance_methods.include?(options[:as].to_s)
       class_eval <<-SRC
           def #{options[:as]}
@@ -87,10 +87,10 @@ module SAXMachine
           end
         SRC
       end
-      
+
       attr_writer options[:as] unless instance_methods.include?("#{options[:as]}=")
     end
-    
+
     def sax_config
       @sax_config ||= SAXConfig.new
     end
@@ -103,5 +103,5 @@ module SAXMachine
         SRC
     end
   end
-  
+
 end

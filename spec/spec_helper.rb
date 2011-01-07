@@ -1,13 +1,7 @@
-require "rubygems"
-require "spec"
+spec_dir = File.expand_path(File.dirname(__FILE__))
+lib_dir = File.expand_path(File.join(spec_dir, '../lib'))
 
-# gem install redgreen for colored test output
-begin require "redgreen" unless ENV['TM_CURRENT_LINE']; rescue LoadError; end
+$:.unshift(lib_dir)
+$:.uniq!
 
-path = File.expand_path(File.dirname(__FILE__) + "/../lib/")
-$LOAD_PATH.unshift(path) unless $LOAD_PATH.include?(path)
-
-require "lib/sax-machine"
-
-# Spec::Runner.configure do |config|
-# end
+require 'sax-machine'

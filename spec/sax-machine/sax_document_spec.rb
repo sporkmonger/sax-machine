@@ -15,7 +15,7 @@ describe "SAXMachine" do
         document.title = "Title"
         document.title.should == "Title"
       end
-      
+
       it "should allow introspection of the elements" do
         @klass.column_names.should =~ [:title]
       end
@@ -54,7 +54,7 @@ describe "SAXMachine" do
           @klass.required?(:date).should be_true
         end
       end
-      
+
       it "should not overwrite the accessor when the element is not present" do
         document = @klass.new
         document.title = "Title"
@@ -73,7 +73,7 @@ describe "SAXMachine" do
         document = @klass.parse("<title>My Title</title>")
         document.title.should == "My Title"
       end
-      
+
       it "should save cdata into an accessor" do
         document = @klass.parse("<title><![CDATA[A Title]]></title>")
         document.title.should == "A Title"
@@ -86,7 +86,7 @@ describe "SAXMachine" do
 
       it "should save the first element text when there are multiple of the same element" do
         document = @klass.parse("<xml><title>My Title</title><title>bar</title></xml>")
-        document.title.should == "My Title"    
+        document.title.should == "My Title"
       end
     end
 
@@ -126,7 +126,7 @@ describe "SAXMachine" do
           document.summary.should == "here is a description"
         end
       end
-      
+
       describe "using the :with option" do
         describe "and the :value option" do
           before :each do
@@ -135,22 +135,22 @@ describe "SAXMachine" do
               element :link, :value => :href, :with => {:foo => "bar"}
             end
           end
-          
+
           it "should escape correctly the ampersand" do
             document = @klass.parse("<link href='http://api.flickr.com/services/feeds/photos_public.gne?id=49724566@N00&amp;lang=en-us&amp;format=atom' foo='bar'>asdf</link>")
             document.link.should == "http://api.flickr.com/services/feeds/photos_public.gne?id=49724566@N00&lang=en-us&format=atom"
           end
-          
+
           it "should save the value of a matching element" do
             document = @klass.parse("<link href='test' foo='bar'>asdf</link>")
             document.link.should == "test"
           end
-          
+
           it "should save the value of the first matching element" do
             document = @klass.parse("<xml><link href='first' foo='bar' /><link href='second' foo='bar' /></xml>")
             document.link.should == "first"
           end
-          
+
           describe "and the :as option" do
             before :each do
               @klass = Class.new do
@@ -159,15 +159,15 @@ describe "SAXMachine" do
                 element :link, :value => :href, :as => :second_url, :with => {:asdf => "jkl"}
               end
             end
-            
+
             it "should save the value of the first matching element" do
               document = @klass.parse("<xml><link href='first' foo='bar' /><link href='second' asdf='jkl' /><link href='second' foo='bar' /></xml>")
               document.url.should == "first"
               document.second_url.should == "second"
-            end            
+            end
           end
         end
-        
+
         describe "with only one element" do
           before :each do
             @klass = Class.new do
@@ -188,15 +188,15 @@ describe "SAXMachine" do
 
           it "should save the text of an element that has matching attributes when it is the second of that type" do
             document = @klass.parse("<xml><link>no match</link><link foo=\"bar\">match</link></xml>")
-            document.link.should == "match"          
+            document.link.should == "match"
           end
-          
+
           it "should save the text of an element that has matching attributes plus a few more" do
             document = @klass.parse("<xml><link>no match</link><link asdf='jkl' foo='bar'>match</link>")
             document.link.should == "match"
           end
         end
-        
+
         describe "with multiple elements of same tag" do
           before :each do
             @klass = Class.new do
@@ -205,19 +205,19 @@ describe "SAXMachine" do
               element :link, :as => :second, :with => {:asdf => "jkl"}
             end
           end
-          
+
           it "should match the first element" do
             document = @klass.parse("<xml><link>no match</link><link foo=\"bar\">first match</link><link>no match</link></xml>")
             document.first.should == "first match"
           end
-          
+
           it "should match the second element" do
             document = @klass.parse("<xml><link>no match</link><link foo='bar'>first match</link><link asdf='jkl'>second match</link><link>hi</link></xml>")
             document.second.should == "second match"
           end
         end
       end # using the 'with' option
-      
+
       describe "using the 'value' option" do
         before :each do
           @klass = Class.new do
@@ -225,22 +225,22 @@ describe "SAXMachine" do
             element :link, :value => :foo
           end
         end
-        
+
         it "should save the attribute value" do
           document = @klass.parse("<link foo='test'>hello</link>")
           document.link.should == 'test'
         end
-        
+
         it "should save the attribute value when there is no text enclosed by the tag" do
           document = @klass.parse("<link foo='test'></link>")
           document.link.should == 'test'
         end
-        
+
         it "should save the attribute value when the tag close is in the open" do
           document = @klass.parse("<link foo='test'/>")
           document.link.should == 'test'
         end
-        
+
         it "should save two different attribute values on a single tag" do
           @klass = Class.new do
             include SAXMachine
@@ -251,7 +251,7 @@ describe "SAXMachine" do
           document.first.should == "foo value"
           document.second.should == "bar value"
         end
-        
+
         it "should not fail if one of the attribute hasn't been defined" do
           @klass = Class.new do
             include SAXMachine
@@ -263,7 +263,7 @@ describe "SAXMachine" do
           document.second.should be_nil
         end
       end
-      
+
       describe "when desiring both the content and attributes of an element" do
         before :each do
           @klass = Class.new do
@@ -367,10 +367,10 @@ describe "SAXMachine" do
           end
         end
       end
-      
+
     end
   end
-  
+
   describe "elements" do
     describe "when parsing multiple elements" do
       before :all do
@@ -379,23 +379,23 @@ describe "SAXMachine" do
           elements :entry, :as => :entries
         end
       end
-      
+
       it "should provide a collection accessor" do
         document = @klass.new
         document.entries << :foo
         document.entries.should == [:foo]
       end
-      
+
       it "should parse a single element" do
         document = @klass.parse("<entry>hello</entry>")
         document.entries.should == ["hello"]
       end
-      
+
       it "should parse multiple elements" do
         document = @klass.parse("<xml><entry>hello</entry><entry>world</entry></xml>")
         document.entries.should == ["hello", "world"]
       end
-      
+
       it "should parse multiple elements when taking an attribute value" do
         attribute_klass = Class.new do
           include SAXMachine
@@ -405,7 +405,7 @@ describe "SAXMachine" do
         doc.entries.should == ["asdf", "jkl"]
       end
     end
-    
+
     describe "when using the class option" do
       before :each do
         class Foo
@@ -417,26 +417,26 @@ describe "SAXMachine" do
           elements :entry, :as => :entries, :class => Foo
         end
       end
-      
+
       it "should parse a single element with children" do
         document = @klass.parse("<entry><title>a title</title></entry>")
         document.entries.size.should == 1
         document.entries.first.title.should == "a title"
       end
-      
+
       it "should parse multiple elements with children" do
         document = @klass.parse("<xml><entry><title>title 1</title></entry><entry><title>title 2</title></entry></xml>")
         document.entries.size.should == 2
         document.entries.first.title.should == "title 1"
         document.entries.last.title.should == "title 2"
       end
-      
+
       it "should not parse a top level element that is specified only in a child" do
         document = @klass.parse("<xml><title>no parse</title><entry><title>correct title</title></entry></xml>")
         document.entries.size.should == 1
         document.entries.first.title.should == "correct title"
       end
-      
+
       it "should parse out an attribute value from the tag that starts the collection" do
         class Foo
           element :entry, :value => :href, :as => :url
@@ -446,7 +446,7 @@ describe "SAXMachine" do
         document.entries.first.title.should == "paul"
         document.entries.first.url.should == "http://pauldix.net"
       end
-    end    
+    end
 
     describe "when desiring sax events" do
       XHTML_XMLNS = "http://www.w3.org/1999/xhtml"
@@ -492,7 +492,7 @@ describe "SAXMachine" do
       end
     end
   end
-  
+
   describe "full example" do
     XMLNS_ATOM = "http://www.w3.org/2005/Atom"
     XMLNS_FEEDBURNER = "http://rssnamespace.org/feedburner/ext/1.0"
@@ -508,7 +508,7 @@ describe "SAXMachine" do
         element :content
         element :published
       end
-        
+
       class Atom
         include SAXMachine
         element :title
@@ -517,7 +517,7 @@ describe "SAXMachine" do
         elements :entry, :as => :entries, :class => AtomEntry, :xmlns => XMLNS_ATOM
       end
     end # before
-    
+
     it "should parse the url" do
       f = Atom.parse(@xml)
       f.url.should == "http://www.pauldix.net/"
@@ -564,7 +564,7 @@ describe "SAXMachine" do
       before :all do
         @document = Root.parse(<<-eoxml).channels[0]
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" 
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"
                    xmlns:content="http://purl.org/rss/1.0/modules/content/"
                    xmlns:wfw="http://wellformedweb.org/CommentAPI/"
                    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -586,20 +586,20 @@ eoxml
         @document.link.should == 'http://feeds.delicious.com/v2/rss/tag/pubsubhubbub?count=15'
       end
     end
-  end  
-  
+  end
+
   describe "yet another full example" do
-  
+
     context "when parsing a Twitter example" do
       before :all do
-        
+
         RSS_XMLNS = ['http://purl.org/rss/1.0/', '']
-        
+
         ATOM_XMLNS = 'http://www.w3.org/2005/Atom' unless defined? ATOM_XMLNS
         class Link
           include SAXMachine
         end
-        
+
         class Entry
           include SAXMachine
           element   :title,        :xmlns => RSS_XMLNS
@@ -607,7 +607,7 @@ eoxml
           element   :title,        :xmlns => ATOM_XMLNS,  :as => :title
           elements  :link,         :xmlns => ATOM_XMLNS,  :as => :links,      :class => Link
         end
-        
+
         class Feed
           include SAXMachine
           element   :title,        :xmlns => RSS_XMLNS,  :as => :title
@@ -616,7 +616,7 @@ eoxml
           element   :title,        :xmlns => ATOM_XMLNS, :as => :title
           elements  :link,         :xmlns => ATOM_XMLNS, :as => :links,           :class => Link
         end
-        
+
         @document = Feed.parse(<<-eoxml)
 <?xml version="1.0" encoding="UTF-8"?>
         <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
@@ -648,7 +648,7 @@ eoxml
       it "should parse the title" do
         @document.title.should == 'Twitter / julien51'
       end
-      
+
       it "should find an entry" do
         @document.entries.length.should == 2
       end

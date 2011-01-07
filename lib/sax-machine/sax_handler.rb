@@ -1,5 +1,5 @@
-require "nokogiri"
-require "sax-machine/ns_stack"
+require 'nokogiri'
+require 'sax-machine/ns_stack'
 
 module SAXMachine
   class SAXHandler < Nokogiri::XML::SAX::Document
@@ -108,7 +108,7 @@ module SAXMachine
     def sax_config
       @object.class.sax_config
     end
-  
+
     ##
     # Decodes XML special characters.
     def self.decode_xml(str)
@@ -117,12 +117,11 @@ module SAXMachine
       # entities = {
       #         '#38'   => '&amp;',
       #         '#13'   => "\r",
-      #       } 
+      #       }
       #       entities.keys.inject(str) { |string, key|
       #         string.gsub(/&#{key};/, entities[key])
-      #       } 
+      #       }
       CGI.unescapeHTML(str)
     end
-  
   end
 end

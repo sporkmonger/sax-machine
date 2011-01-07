@@ -1,10 +1,10 @@
 module SAXMachine
   class SAXConfig
-    
+
     class CollectionConfig
       attr_reader :name
       attr_reader :default_xmlns
-      
+
       def initialize(name, options)
         @name   = name.to_s
         @class  = options[:class]
@@ -20,7 +20,7 @@ module SAXMachine
         end
         @record_events = options[:events]
       end
-      
+
       def handler(nsstack)
         if @default_xmlns && (nsstack.nil? || nsstack[EMPTY_STRING] == EMPTY_STRING)
           nsstack = NSStack.new(nsstack, nsstack)
@@ -32,25 +32,25 @@ module SAXMachine
           SAXEventRecorder.new(nsstack)
         end
       end
-      
+
       def accessor
         as
       end
-      
+
       def xmlns_match?(ns)
         @xmlns.nil? || @xmlns.include?(ns)
       end
-      
+
     protected
-      
+
       def as
         @as
       end
-      
+
       def class
         @class || @name
-      end      
+      end
     end
-    
+
   end
 end

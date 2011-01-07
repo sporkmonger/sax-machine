@@ -1,5 +1,5 @@
-require "sax-machine/sax_element_config"
-require "sax-machine/sax_collection_config"
+require 'sax-machine/sax_element_config'
+require 'sax-machine/sax_collection_config'
 
 module SAXMachine
   class SAXConfig
