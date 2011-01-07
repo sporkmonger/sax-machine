@@ -24,7 +24,6 @@ module SAXMachine
   end
 
   module ClassMethods
-
     def parse(xml_text)
       # It might be cleaner to aditionally call parse_finish here, but
       # then Nokogiri/libxml2 barfs on incomplete documents. Desired
@@ -44,11 +43,9 @@ module SAXMachine
     end
 
     def columns
-      r = []
-      sax_config.top_level_elements.each do |name, ecs|
-        r += ecs
+      sax_config.top_level_elements.inject([]) do |accu, (name, ecs)|
+        accu += ecs; accu
       end
-      r
     end
 
     def column(sym)
