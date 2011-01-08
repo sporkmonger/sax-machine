@@ -56,7 +56,7 @@ module SAXMachine
         reset_current_collection
       elsif parsing_collection?
         @collection_handler.end_element(name)
-      elsif characaters_captured?
+      elsif characters_captured? && !@element_config.has_value?
         @object.send(@element_config.setter, @value)
       end
 
@@ -64,7 +64,7 @@ module SAXMachine
       @nsstack = @nsstack.pop
     end
 
-    def characaters_captured?
+    def characters_captured?
       !@value.nil? && !@value.empty?
     end
 

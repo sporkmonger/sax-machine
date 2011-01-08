@@ -64,8 +64,12 @@ module SAXMachine
         end
       end
 
+      def has_value?
+        !@value.nil?
+      end
+
       def has_value_and_attrs_match?(attrs)
-        !@value.nil? && attrs_match?(attrs)
+        has_value? && attrs_match?(attrs)
       end
 
       def xmlns_match?(ns)
