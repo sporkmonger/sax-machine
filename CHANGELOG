@@ -1,6 +1,7 @@
 == 0.1.1
 
-* fixed bug with element contents being copied into attributes.
+* fixed bug with element contents being copied into attributes
+* fixed a few warnings
 
 == 0.1.0
 
