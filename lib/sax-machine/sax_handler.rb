@@ -69,7 +69,7 @@ module SAXMachine
     end
 
     def parsing_collection?
-      !@collection_handler.nil?
+      !(@collection_handler ||= nil).nil?
     end
 
     def parse_element_attributes(element_configs)
