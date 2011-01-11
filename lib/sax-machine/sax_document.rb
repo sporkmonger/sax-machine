@@ -7,11 +7,14 @@ module SAXMachine
   end
 
   def parse(xml_text)
-    unless @parser
+    @parser ||= (begin
       sax_handler = SAXHandler.new(self)
-      @parser = Nokogiri::XML::SAX::PushParser.new(sax_handler)
-      @parser.options |= Nokogiri::XML::ParseOptions::RECOVER if @parser.respond_to?(:options)
-    end
+      parser = Nokogiri::XML::SAX::PushParser.new(sax_handler)
+      if parser.respond_to?(:options)
+        parser.options |= Nokogiri::XML::ParseOptions::RECOVER
+      end
+      parser
+    end)
     @parser << xml_text
     self
   end
